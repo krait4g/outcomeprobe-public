@@ -1,0 +1,64 @@
+package io.outcomeprobe.evidence;
+
+/**
+ * Evidence Timeline에 기록되는 사건 유형 사전이다.
+ *
+ * <p>책임: Run·Target·Provider·Callback·Probe·Assertion 전 구간에서 관측한 사실을
+ * 고정된 vocabulary로 분류해 Timeline과 assertion이 기계적으로 소비하게 한다.</p>
+ * <p>핵심 불변식: Provider commit과 HTTP 응답은 서로 다른 유형
+ * ({@code PROVIDER_OPERATION_COMMITTED}와 {@code PROVIDER_RESPONSE_SENT} 또는
+ * {@code PROVIDER_RESPONSE_FAULT_APPLIED})으로 기록한다. 두 사실을 하나의 유형에
+ * 섞으면 모호한 결과 재현이 불가능해진다.</p>
+ */
+public enum EvidenceType {
+
+    // Run과 Step 진행 사건이다.
+    RUN_QUEUED,
+    RUN_STARTED,
+    STEP_STARTED,
+    STEP_WAITING,
+    STEP_PASSED,
+    STEP_FAILED,
+    RUN_PASSED,
+    RUN_FAILED,
+    RUN_ERROR,
+    RUN_CANCELLED,
+
+    // Target 상호작용 사건이다. PLANNED는 모호한 재시도를 판단하는 근거로 사용된다.
+    TARGET_REQUEST_PLANNED,
+    TARGET_REQUEST_SENT,
+    TARGET_RESPONSE_RECEIVED,
+    TARGET_REQUEST_FAILED,
+
+    // Provider Emulator에서 관측한 사건이다.
+    PROVIDER_REQUEST_RECEIVED,
+    PROVIDER_REQUEST_REJECTED,
+    PROVIDER_OPERATION_MATCHED,
+    PROVIDER_STATE_INTERMEDIATE,
+    PROVIDER_OPERATION_COMMITTED,
+    PROVIDER_QUERY_RECEIVED,
+    PROVIDER_VISIBLE_STATE_RETURNED,
+    PROVIDER_RESPONSE_SENT,
+    PROVIDER_RESPONSE_FAULT_APPLIED,
+
+    // Callback 전달 사건이다.
+    CALLBACK_SCHEDULED,
+    CALLBACK_OMITTED_BY_SCENARIO,
+    CALLBACK_DELIVERY_LEASED,
+    CALLBACK_DELIVERY_ATTEMPTED,
+    CALLBACK_DELIVERY_SUCCEEDED,
+    CALLBACK_DELIVERY_FAILED,
+    CALLBACK_DELIVERY_RETRY_SCHEDULED,
+    CALLBACK_DELIVERY_DEAD,
+    CALLBACK_DELIVERY_OUTCOME_UNKNOWN,
+
+    // Probe와 assertion 판정 사건이다.
+    PROBE_ATTEMPTED,
+    PROBE_ATTEMPT_INTERRUPTED,
+    PROBE_RESPONSE_RECEIVED,
+    PROBE_ASSERTION_PENDING,
+    PROBE_ASSERTION_PASSED,
+    PROBE_ASSERTION_FAILED,
+    EVIDENCE_ASSERTION_PASSED,
+    EVIDENCE_ASSERTION_FAILED
+}

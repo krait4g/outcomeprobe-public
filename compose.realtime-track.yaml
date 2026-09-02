@@ -1,0 +1,67 @@
+services:
+  realtime-track-target:
+    build:
+      context: ./examples/realtime-track/target-fixture
+      dockerfile: Dockerfile
+    environment:
+      OUTCOMEPROBE_REALTIME_TARGET_TOKEN: ${OUTCOMEPROBE_REALTIME_TARGET_TOKEN:?OUTCOMEPROBE_REALTIME_TARGET_TOKEN must be set}
+      OUTCOMEPROBE_REALTIME_CALLBACK_SECRET: ${OUTCOMEPROBE_REALTIME_CALLBACK_SECRET:?OUTCOMEPROBE_REALTIME_CALLBACK_SECRET must be set}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=8m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8181/health', timeout=1).read()"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
+    networks:
+      app:
+        aliases:
+          - realtime-track-target
+
+  outcomeprobe-server:
+    environment:
+      OUTCOMEPROBE_SECRET_REALTIME_TARGET_TOKEN: Bearer ${OUTCOMEPROBE_REALTIME_TARGET_TOKEN:?OUTCOMEPROBE_REALTIME_TARGET_TOKEN must be set}
+      OUTCOMEPROBE_SECRET_REALTIME_CALLBACK_SIGNING_KEY: ${OUTCOMEPROBE_REALTIME_CALLBACK_SECRET:?OUTCOMEPROBE_REALTIME_CALLBACK_SECRET must be set}
+    depends_on:
+      realtime-track-target:
+        condition: service_healthy
+
+  outcomeprobe-realtime-kit:
+    build:
+      context: .
+      dockerfile: docker/realtime-kit.Dockerfile
+    environment:
+      OUTCOMEPROBE_SERVER_URL: http://outcomeprobe-server:8080
+      OUTCOMEPROBE_CONTROL_API_TOKEN: ${OUTCOMEPROBE_CONTROL_API_TOKEN:?OUTCOMEPROBE_CONTROL_API_TOKEN must be set}
+      OUTCOMEPROBE_REALTIME_TARGET_TOKEN: ${OUTCOMEPROBE_REALTIME_TARGET_TOKEN:?OUTCOMEPROBE_REALTIME_TARGET_TOKEN must be set}
+      OUTCOMEPROBE_REALTIME_CALLBACK_SECRET: ${OUTCOMEPROBE_REALTIME_CALLBACK_SECRET:?OUTCOMEPROBE_REALTIME_CALLBACK_SECRET must be set}
+    profiles:
+      - tools
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777
+    volumes:
+      - realtime-kit-evidence:/evidence
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    restart: "no"
+    depends_on:
+      outcomeprobe-server:
+        condition: service_healthy
+      realtime-track-target:
+        condition: service_healthy
+    networks:
+      - app
+
+volumes:
+  realtime-kit-evidence:

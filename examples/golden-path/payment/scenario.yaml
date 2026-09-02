@@ -1,0 +1,115 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: Scenario
+metadata:
+  name: payment-timeout-after-commit
+  displayName: 결제 승인 후 응답 유실에서 최종 성공 상태 수렴
+  version: 1.0.0
+  labels:
+    domain: payment
+    failure: timeout-after-commit
+spec:
+  contractRef:
+    name: generic-payment
+    version: 1.1.0
+  targetProfileRef: resilient-consumer
+  seed: 42001
+  timeout: 30s
+  variables:
+    paymentId: pay-1001
+    amount: 30000
+  steps:
+    - id: reset-target
+      type: target.http
+      request:
+        method: POST
+        path: /test-support/reset
+        body:
+          paymentId: "${variables.paymentId}"
+      expect:
+        status: 204
+
+    - id: seed-payment
+      type: provider.seed
+      resource:
+        type: payment
+        id: "${variables.paymentId}"
+        state: READY
+        version: 0
+        attributes:
+          amount: "${variables.amount}"
+
+    - id: expect-confirm
+      type: provider.expect
+      operation: confirmPayment
+      times: 1
+      behavior:
+        commit: true
+        responseFault:
+          type: TIMEOUT_AFTER_COMMIT
+          delay: 2s
+
+    - id: trigger-confirm
+      type: target.http
+      request:
+        method: POST
+        path: /api/payments/${variables.paymentId}/confirm
+        headers:
+          Idempotency-Key: kl-demo-1001
+        body:
+          amount: "${variables.amount}"
+      expect:
+        statusIn:
+          - 200
+          - 202
+          - 504
+
+    - id: omit-success-callback
+      type: callback.schedule
+      callback: paymentSucceeded
+      resource:
+        type: payment
+        id: "${variables.paymentId}"
+      delivery:
+        mode: OMIT
+
+    - id: wait-confirm-call
+      type: evidence.await
+      within: 10s
+      match:
+        type: PROVIDER_OPERATION_COMMITTED
+        attributes:
+          operation: confirmPayment
+
+    - id: assert-final-state
+      type: probe.eventually
+      within: 15s
+      interval: 500ms
+      request:
+        method: GET
+        path: /test-support/payments/${variables.paymentId}
+      assertions:
+        - jsonPath: $.status
+          equals: SUCCEEDED
+        - jsonPath: $.providerQueryCount
+          greaterThanOrEqual: 1
+        - jsonPath: $.ledgerPostCount
+          equals: 1
+
+    - id: assert-interactions
+      type: evidence.assert
+      assertions:
+        - count:
+            type: PROVIDER_OPERATION_COMMITTED
+            attributes:
+              operation: confirmPayment
+          equals: 1
+        - count:
+            type: CALLBACK_DELIVERY_SUCCEEDED
+            attributes:
+              callback: paymentSucceeded
+          equals: 0
+        - count:
+            type: PROVIDER_QUERY_RECEIVED
+            attributes:
+              operation: getPayment
+          greaterThanOrEqual: 1

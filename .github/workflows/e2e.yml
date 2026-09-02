@@ -1,0 +1,168 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compose-e2e:
+    name: Docker Compose demo matrix and Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      COMPOSE_PROJECT_NAME: outcomeprobe-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+      OUTCOMEPROBE_DB_PASSWORD: outcomeprobe-ci-db-${{ github.run_id }}
+      OUTCOMEPROBE_DEMO_CALLBACK_SECRET: outcomeprobe-ci-callback-${{ github.run_id }}
+      OUTCOMEPROBE_RETENTION_DAYS: "9"
+      OUTCOMEPROBE_MAX_CONCURRENT_RUNS: "7"
+      OUTCOMEPROBE_DEMO_PROFILE_SEEDING_ENABLED: "false"
+      OUTCOMEPROBE_EMULATOR_TOKEN: outcomeprobe-ci-emulator-${{ github.run_id }}
+      OUTCOMEPROBE_CONTROL_API_TOKEN: outcomeprobe-ci-control-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+      OUTCOMEPROBE_LOG_LEVEL: WARN
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Verify the Compose and environment contract
+        run: |
+          python3 -m unittest discover \
+            -s scripts/config-contract/tests \
+            -p 'test_*.py'
+          python3 scripts/config-contract/verify_compose_env_contract.py
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install frontend dependencies and the browser
+        working-directory: web
+        run: |
+          npm ci
+          ./node_modules/.bin/playwright install --with-deps chromium
+
+      # 이 단계가 첫 Docker build입니다. 아래 Quick Start 명령 자체는 호스트 JDK·Gradle·
+      # Node·curl·jq를 호출하지 않고 이미지 build와 장기 service health를 완료합니다.
+      - name: Start the Docker-only Quick Start
+        run: docker compose up -d --build --wait --wait-timeout 600
+
+      - name: Wait for stack health
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://localhost:8080/actuator/health/readiness > /dev/null \
+              && docker compose exec -T reference-consumer-vulnerable \
+                curl -fsS http://localhost:8091/actuator/health/readiness > /dev/null \
+              && docker compose exec -T reference-consumer-resilient \
+                curl -fsS http://localhost:8092/actuator/health/readiness > /dev/null \
+              && curl -fsS http://localhost:3000 > /dev/null; then
+              echo "stack healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "stack did not become healthy" >&2
+          docker compose ps
+          exit 1
+
+      - name: Verify fresh operator onboarding before bootstrap
+        working-directory: web
+        env:
+          OUTCOMEPROBE_UI_URL: http://localhost:3000
+          OUTCOMEPROBE_PLAYWRIGHT_JSON_OUTPUT: ${{ runner.temp }}/web-ux-e2e/fresh-report.json
+        run: |
+          mkdir -p "${{ runner.temp }}/web-ux-e2e"
+          npm run test:e2e -- --grep '@fresh\b'
+
+      - name: Run the ephemeral Docker-only bootstrap
+        run: |
+          docker compose run --rm -T --no-deps --build outcomeprobe-bootstrap
+          test -z "$(docker compose ps -aq outcomeprobe-bootstrap)"
+
+      - name: Verify runtime environment binding
+        run: |
+          control_curl() {
+            printf 'header = "Authorization: Bearer %s"\n' "$OUTCOMEPROBE_CONTROL_API_TOKEN" |
+              curl --config - "$@"
+          }
+          unauthenticated_control="$(curl -sS -o /dev/null -w '%{http_code}' \
+            http://localhost:8080/api/v1/settings)"
+          test "$unauthenticated_control" = "401"
+          wrong_control_token='synthetic-'
+          wrong_control_token+='wrong-auth-'
+          wrong_control_token+='fixture-value'
+          wrong_control="$(printf 'header = "Authorization: Bearer %s"\n' "$wrong_control_token" | \
+            curl --config - -sS -o /dev/null -w '%{http_code}' \
+              http://localhost:8080/api/v1/settings)"
+          unset wrong_control_token
+          test "$wrong_control" = "401"
+
+          settings="$(control_curl -fsS http://localhost:8080/api/v1/settings)"
+          jq -e '.retentionDays == 9 and .maxConcurrentRuns == 7 and .emulatorTokenRequired == true' \
+            <<<"$settings" > /dev/null
+
+          profiles="$(control_curl -fsS http://localhost:8080/api/v1/target-profiles)"
+          jq -e '
+            length == 2 and
+            ([.[].name] | sort) == ["resilient-consumer", "vulnerable-consumer"]
+          ' <<<"$profiles" > /dev/null
+
+          unauthenticated="$(curl -sS -o /dev/null -w '%{http_code}' \
+            http://localhost:8080/emulator/missing/health)"
+          test "$unauthenticated" = "401"
+
+          authenticated="$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "X-OutcomeProbe-Emulator-Token: $OUTCOMEPROBE_EMULATOR_TOKEN" \
+            http://localhost:8080/emulator/missing/health)"
+          test "$authenticated" != "401"
+
+      - name: Verify post-bootstrap operator golden paths
+        working-directory: web
+        env:
+          OUTCOMEPROBE_UI_URL: http://localhost:3000
+          OUTCOMEPROBE_PLAYWRIGHT_JSON_OUTPUT: ${{ runner.temp }}/web-ux-e2e/post-report.json
+          OUTCOMEPROBE_WEB_UX_OBSERVATIONS: ${{ runner.temp }}/web-ux-e2e/observations.json
+        run: npm run test:e2e -- --grep '@post\b'
+
+      - name: Run demo matrix (vulnerable FAIL, resilient PASS)
+        run: bash scripts/demo-payment.sh
+
+      - name: Exercise the isolated Compose runtime contract
+        run: bash scripts/config-contract/verify-compose-runtime.sh
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose logs --tail=200
+
+      - name: Clean up the Compose stack
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+
+      - name: Normalize successful browser evidence
+        run: |
+          for kind in container network volume; do
+            case "$kind" in
+              container) count=$(docker ps -aq --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME");;
+              network) count=$(docker network ls -q --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME");;
+              volume) count=$(docker volume ls -q --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME");;
+            esac
+            test -z "$count"
+          done
+          node scripts/core-release-staging/create-web-ux-summary.mjs \
+            --fresh-report "${{ runner.temp }}/web-ux-e2e/fresh-report.json" \
+            --post-report "${{ runner.temp }}/web-ux-e2e/post-report.json" \
+            --observations "${{ runner.temp }}/web-ux-e2e/observations.json" \
+            --source-sha "${{ github.sha }}" \
+            --output "${{ runner.temp }}/web-ux-e2e/web-ux-summary.json"
+
+      - name: Upload normalized browser receipt
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: web-ux-summary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/web-ux-e2e/web-ux-summary.json
+          if-no-files-found: error
+          retention-days: 14

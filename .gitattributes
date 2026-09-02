@@ -1,0 +1,8 @@
+/docker/bootstrap.sh text eol=lf
+/docker/realtime-kit.sh text eol=lf
+/examples/golden-path/payment/*.yaml text eol=lf
+/examples/realtime-track/*.yaml text eol=lf
+/examples/realtime-track/target-fixture/*.py text eol=lf
+/scripts/user-service-kit/*.sh text eol=lf
+/scripts/user-service-kit/*.py text eol=lf
+/compose.realtime-track.yaml text eol=lf

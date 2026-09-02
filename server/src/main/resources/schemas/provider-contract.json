@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://outcomeprobe.io/schemas/provider-contract.json",
+  "title": "ProviderContract",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "type": "string", "const": "outcomeprobe.io/v1alpha1" },
+    "kind": { "type": "string", "const": "ProviderContract" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?$" },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["emulatorAlias", "operations"],
+      "properties": {
+        "emulatorAlias": { "type": "string" },
+        "resourceTypes": { "type": "object" },
+        "operations": { "type": "object", "minProperties": 1 },
+        "callbacks": { "type": "object" }
+      }
+    }
+  }
+}

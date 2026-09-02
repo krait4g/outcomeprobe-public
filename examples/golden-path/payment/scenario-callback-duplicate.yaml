@@ -1,0 +1,113 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: Scenario
+metadata:
+  name: payment-success-callback-duplicate
+  displayName: 동일 성공 Callback 3회 중복 전달에서 side effect 1회 수렴
+  version: 1.0.0
+  labels:
+    domain: payment
+    failure: duplicate-callback
+spec:
+  contractRef:
+    name: generic-payment
+    version: 1.1.0
+  targetProfileRef: resilient-consumer
+  seed: 42002
+  timeout: 30s
+  variables:
+    paymentId: pay-2001
+    amount: 50000
+  steps:
+    - id: reset-target
+      type: target.http
+      request:
+        method: POST
+        path: /test-support/reset
+        body:
+          paymentId: "${variables.paymentId}"
+      expect:
+        status: 204
+
+    - id: seed-payment
+      type: provider.seed
+      resource:
+        type: payment
+        id: "${variables.paymentId}"
+        state: READY
+        version: 0
+        attributes:
+          amount: "${variables.amount}"
+
+    - id: expect-confirm
+      type: provider.expect
+      operation: confirmPayment
+      times: 1
+      behavior:
+        commit: true
+        responseFault:
+          type: NONE
+
+    - id: trigger-confirm
+      type: target.http
+      request:
+        method: POST
+        path: /api/payments/${variables.paymentId}/confirm
+        headers:
+          Idempotency-Key: kl-demo-2001
+        body:
+          amount: "${variables.amount}"
+      expect:
+        statusIn:
+          - 200
+          - 202
+
+    - id: deliver-success-events
+      type: callback.schedule
+      callback: paymentSucceeded
+      resource:
+        type: payment
+        id: "${variables.paymentId}"
+      events:
+        - eventId: evt-pay-2001-success
+          state: SUCCEEDED
+          version: 2
+          delivery:
+            delay: 600ms
+            duplicates: 3
+            duplicateInterval: 150ms
+
+    - id: wait-all-deliveries
+      type: evidence.await
+      within: 15s
+      match:
+        type: CALLBACK_DELIVERY_SUCCEEDED
+        attributes:
+          eventId: evt-pay-2001-success
+          occurrence: "3"
+
+    - id: assert-final-state
+      type: probe.eventually
+      within: 10s
+      interval: 300ms
+      request:
+        method: GET
+        path: /test-support/payments/${variables.paymentId}
+      assertions:
+        - jsonPath: $.status
+          equals: SUCCEEDED
+        - jsonPath: $.ledgerPostCount
+          equals: 1
+
+    - id: assert-deliveries
+      type: evidence.assert
+      assertions:
+        - count:
+            type: CALLBACK_DELIVERY_SUCCEEDED
+            attributes:
+              eventId: evt-pay-2001-success
+          equals: 3
+        - count:
+            type: PROVIDER_OPERATION_COMMITTED
+            attributes:
+              operation: confirmPayment
+          equals: 1

@@ -1,0 +1,102 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: Scenario
+metadata:
+  name: realtime-track-out-of-order
+  displayName: 역순 Track Callback에서 최신 좌표 유지
+  version: 1.0.0
+  labels:
+    domain: realtime-track
+    failure: out-of-order
+spec:
+  contractRef:
+    name: realtime-track
+    version: 1.0.0
+  targetProfileRef: realtime-track-compose
+  seed: 90003
+  timeout: 35s
+  variables:
+    trackKey: track-out-of-order-30001
+    latitudeNew: 37.521
+    longitudeNew: 127.021
+    latitudeOld: 37.499
+    longitudeOld: 126.999
+  steps:
+    - id: reset-target
+      type: target.http
+      request:
+        method: POST
+        path: /test-support/outcomeprobe/reset
+        body: {}
+      expect:
+        status: 204
+
+    - id: deliver-out-of-order-events
+      type: callback.schedule
+      callback: trackFused
+      resource:
+        type: track
+        id: "${variables.trackKey}"
+      events:
+        - eventId: evt-newer-30001
+          state: FUSED
+          version: 2
+          attributes:
+            latitude: "${variables.latitudeNew}"
+            longitude: "${variables.longitudeNew}"
+            eventTsEpochMs: 1785000202000
+          delivery:
+            delay: 200ms
+        - eventId: evt-older-30001
+          state: FUSED
+          version: 1
+          attributes:
+            latitude: "${variables.latitudeOld}"
+            longitude: "${variables.longitudeOld}"
+            eventTsEpochMs: 1785000201000
+          delivery:
+            delay: 500ms
+
+    - id: wait-older-delivery
+      type: evidence.await
+      within: 15s
+      match:
+        type: CALLBACK_DELIVERY_SUCCEEDED
+        attributes:
+          eventId: evt-older-30001
+
+    - id: assert-no-regression
+      type: probe.eventually
+      within: 10s
+      interval: 300ms
+      stability:
+        consecutiveSuccesses: 2
+        interval: 300ms
+      request:
+        method: GET
+        path: /test-support/outcomeprobe/radar-state/${variables.trackKey}
+      assertions:
+        - jsonPath: $.members[0].latitude
+          equals: "${variables.latitudeNew}"
+        - jsonPath: $.members[0].longitude
+          equals: "${variables.longitudeNew}"
+        - jsonPath: $.members[0].eventTsEpochMs
+          equals: 1785000202000
+        - jsonPath: $.members[0].version
+          equals: 2
+        - jsonPath: $.receivedEventCount
+          equals: 2
+        - jsonPath: $.appliedEventCount
+          equals: 1
+
+    - id: assert-order-evidence
+      type: evidence.assert
+      assertions:
+        - before:
+            first:
+              type: CALLBACK_DELIVERY_SUCCEEDED
+              attributes:
+                eventId: evt-newer-30001
+            second:
+              type: CALLBACK_DELIVERY_SUCCEEDED
+              attributes:
+                eventId: evt-older-30001

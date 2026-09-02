@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://outcomeprobe.io/schemas/scenario.json",
+  "title": "Scenario",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "type": "string", "const": "outcomeprobe.io/v1alpha1" },
+    "kind": { "type": "string", "const": "Scenario" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?$" },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+        "labels": { "type": "object" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["contractRef", "steps"],
+      "properties": {
+        "contractRef": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "targetProfileRef": { "type": "string" },
+        "seed": { "type": "integer" },
+        "timeout": { "type": "string" },
+        "variables": { "type": "object" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

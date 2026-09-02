@@ -1,0 +1,152 @@
+# OutcomeProbe 로컬·CI 데모 구성
+# 경고: 기본 구성은 로컬·CI 테스트용입니다. 인터넷에 직접 노출하지 마세요.
+# 팀 공유 환경에서는 인증 reverse proxy와 별도 network policy를 구성하세요.
+services:
+  postgres:
+    image: postgres:18.4
+    environment:
+      POSTGRES_DB: ${OUTCOMEPROBE_DB_NAME:-outcomeprobe}
+      POSTGRES_USER: ${OUTCOMEPROBE_DB_USER:-outcomeprobe}
+      POSTGRES_PASSWORD: ${OUTCOMEPROBE_DB_PASSWORD:?OUTCOMEPROBE_DB_PASSWORD must be set}
+    volumes:
+      # PostgreSQL 18+ 이미지는 major 버전별 하위 디렉터리를 사용하므로
+      # /var/lib/postgresql/data가 아닌 /var/lib/postgresql에 마운트한다.
+      - outcomeprobe-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OUTCOMEPROBE_DB_USER:-outcomeprobe} -d ${OUTCOMEPROBE_DB_NAME:-outcomeprobe}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - data
+
+  outcomeprobe-server:
+    build:
+      context: .
+      dockerfile: docker/server.Dockerfile
+    # 임의 secretRef용 canonical 환경변수는 Git에서 제외된 이 선택 파일로 서버에만 전달한다.
+    env_file:
+      - path: .env.secrets
+        required: false
+    environment:
+      OUTCOMEPROBE_DB_HOST: postgres
+      OUTCOMEPROBE_DB_PORT: "5432"
+      OUTCOMEPROBE_DB_NAME: ${OUTCOMEPROBE_DB_NAME:-outcomeprobe}
+      OUTCOMEPROBE_DB_USER: ${OUTCOMEPROBE_DB_USER:-outcomeprobe}
+      OUTCOMEPROBE_DB_PASSWORD: ${OUTCOMEPROBE_DB_PASSWORD:?OUTCOMEPROBE_DB_PASSWORD must be set}
+      # canonical env 또는 mounted file이 있으면 이 데모 전용 fallback보다 우선한다.
+      OUTCOMEPROBE_DEMO_CALLBACK_SECRET: ${OUTCOMEPROBE_DEMO_CALLBACK_SECRET:?OUTCOMEPROBE_DEMO_CALLBACK_SECRET must be set}
+      OUTCOMEPROBE_CONTROL_API_TOKEN: ${OUTCOMEPROBE_CONTROL_API_TOKEN:?OUTCOMEPROBE_CONTROL_API_TOKEN must be set}
+      OUTCOMEPROBE_RETENTION_DAYS: ${OUTCOMEPROBE_RETENTION_DAYS:-14}
+      OUTCOMEPROBE_MAX_CONCURRENT_RUNS: ${OUTCOMEPROBE_MAX_CONCURRENT_RUNS:-10}
+      # Quick Start Artifact는 one-shot bootstrap이 다섯 개 모두 명시적으로 import한다.
+      OUTCOMEPROBE_DEMO_PROFILE_SEEDING_ENABLED: ${OUTCOMEPROBE_DEMO_PROFILE_SEEDING_ENABLED:-false}
+      OUTCOMEPROBE_EMULATOR_TOKEN: ${OUTCOMEPROBE_EMULATOR_TOKEN:-}
+      OUTCOMEPROBE_LOG_LEVEL: ${OUTCOMEPROBE_LOG_LEVEL:-INFO}
+    ports:
+      - "127.0.0.1:${OUTCOMEPROBE_SERVER_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      - app
+      - data
+
+  outcomeprobe-web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    ports:
+      - "127.0.0.1:${OUTCOMEPROBE_WEB_PORT:-3000}:3000"
+    depends_on:
+      outcomeprobe-server:
+        condition: service_healthy
+    networks:
+      - app
+
+  reference-consumer-vulnerable:
+    build:
+      context: .
+      dockerfile: docker/reference-consumer.Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: vulnerable,demo
+      OUTCOMEPROBE_EMULATOR_BASE_URL: http://outcomeprobe-server:8080/emulator/mockpay
+      OUTCOMEPROBE_BOOKING_EMULATOR_BASE_URL: http://outcomeprobe-server:8080/emulator/mockbooking
+      OUTCOMEPROBE_DEMO_CALLBACK_SECRET: ${OUTCOMEPROBE_DEMO_CALLBACK_SECRET:?OUTCOMEPROBE_DEMO_CALLBACK_SECRET must be set}
+      OUTCOMEPROBE_EMULATOR_TOKEN: ${OUTCOMEPROBE_EMULATOR_TOKEN:-}
+    depends_on:
+      outcomeprobe-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8091/actuator/health/readiness"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      app:
+        aliases:
+          - rr-vulnerable
+
+  reference-consumer-resilient:
+    build:
+      context: .
+      dockerfile: docker/reference-consumer.Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: resilient,demo
+      OUTCOMEPROBE_EMULATOR_BASE_URL: http://outcomeprobe-server:8080/emulator/mockpay
+      OUTCOMEPROBE_BOOKING_EMULATOR_BASE_URL: http://outcomeprobe-server:8080/emulator/mockbooking
+      OUTCOMEPROBE_DEMO_CALLBACK_SECRET: ${OUTCOMEPROBE_DEMO_CALLBACK_SECRET:?OUTCOMEPROBE_DEMO_CALLBACK_SECRET must be set}
+      OUTCOMEPROBE_EMULATOR_TOKEN: ${OUTCOMEPROBE_EMULATOR_TOKEN:-}
+    depends_on:
+      outcomeprobe-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8092/actuator/health/readiness"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      app:
+        aliases:
+          - rr-resilient
+
+  outcomeprobe-bootstrap:
+    build:
+      context: .
+      dockerfile: docker/bootstrap.Dockerfile
+    environment:
+      OUTCOMEPROBE_SERVER_URL: http://outcomeprobe-server:8080
+      OUTCOMEPROBE_CONTROL_API_TOKEN: ${OUTCOMEPROBE_CONTROL_API_TOKEN:?OUTCOMEPROBE_CONTROL_API_TOKEN must be set}
+    profiles:
+      - tools
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    restart: "no"
+    depends_on:
+      outcomeprobe-server:
+        condition: service_healthy
+      reference-consumer-vulnerable:
+        condition: service_healthy
+      reference-consumer-resilient:
+        condition: service_healthy
+    networks:
+      - app
+
+networks:
+  app:
+  data:
+    internal: true
+
+volumes:
+  outcomeprobe-postgres-data:

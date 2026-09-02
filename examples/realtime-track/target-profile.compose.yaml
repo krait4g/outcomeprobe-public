@@ -1,0 +1,31 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: TargetProfile
+metadata:
+  name: realtime-track-compose
+  displayName: Self-contained Realtime Track Target
+  version: 1.0.0
+spec:
+  baseUri: http://realtime-track-target:8181
+  allowedPaths:
+    - /api/v1/events
+    - /test-support/outcomeprobe/reset
+    - /test-support/outcomeprobe/radar-state/**
+    - /webhooks/track-fused
+  allowedMethods:
+    - GET
+    - POST
+  allowedHosts:
+    - realtime-track-target
+  allowedPorts:
+    - 8181
+  secretHeaders:
+    Authorization:
+      secretRef: realtime-target-token
+  callbackPaths:
+    trackFused: /webhooks/track-fused
+  redaction:
+    headers:
+      - Authorization
+      - Cookie
+      - X-OutcomeProbe-Signature
+    jsonPaths: []

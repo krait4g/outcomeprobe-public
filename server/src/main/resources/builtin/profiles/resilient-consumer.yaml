@@ -1,0 +1,27 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: TargetProfile
+metadata:
+  name: resilient-consumer
+  displayName: Resilient Reference Consumer
+  version: 1.0.0
+spec:
+  baseUri: "{{BASE_URI}}"
+  allowedPaths:
+    - /api/**
+    - /test-support/**
+    - /webhooks/**
+  allowedMethods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+  callbackPaths:
+    paymentSucceeded: /webhooks/payments
+    bookingStatusChanged: /webhooks/bookings
+    entityStateChanged: /webhooks/generic
+  redaction:
+    headers:
+      - Authorization
+      - Cookie
+    jsonPaths: []

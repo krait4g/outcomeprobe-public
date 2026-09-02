@@ -1,0 +1,86 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: Scenario
+metadata:
+  name: realtime-track-duplicate-3x
+  displayName: Duplicate callback converges once
+  version: 1.0.0
+  labels:
+    domain: realtime-track
+    failure: duplicate-callback
+spec:
+  contractRef:
+    name: realtime-track
+    version: 1.0.0
+  targetProfileRef: realtime-track-compose
+  seed: 90002
+  timeout: 35s
+  variables:
+    trackKey: track-duplicate-20001
+    latitude: 37.51
+    longitude: 127.01
+  steps:
+    - id: reset-target
+      type: target.http
+      request:
+        method: POST
+        path: /test-support/outcomeprobe/reset
+        body: {}
+      expect:
+        status: 204
+
+    - id: deliver-duplicates
+      type: callback.schedule
+      callback: trackFused
+      resource:
+        type: track
+        id: "${variables.trackKey}"
+      events:
+        - eventId: evt-duplicate-20001
+          state: FUSED
+          version: 1
+          attributes:
+            latitude: "${variables.latitude}"
+            longitude: "${variables.longitude}"
+            eventTsEpochMs: 1785000100000
+          delivery:
+            delay: 200ms
+            duplicates: 3
+            duplicateInterval: 100ms
+
+    - id: wait-all-duplicates
+      type: evidence.await
+      within: 15s
+      match:
+        type: CALLBACK_DELIVERY_SUCCEEDED
+        attributes:
+          eventId: evt-duplicate-20001
+          occurrence: "3"
+
+    - id: assert-duplicate-convergence
+      type: probe.eventually
+      within: 10s
+      interval: 300ms
+      stability:
+        consecutiveSuccesses: 2
+        interval: 300ms
+      request:
+        method: GET
+        path: /test-support/outcomeprobe/radar-state/${variables.trackKey}
+      assertions:
+        - jsonPath: $.localMappingCount
+          equals: 1
+        - jsonPath: $.receivedEventCount
+          equals: 3
+        - jsonPath: $.processedEventCount
+          equals: 1
+        - jsonPath: $.appliedEventCount
+          equals: 1
+
+    - id: assert-duplicate-evidence
+      type: evidence.assert
+      assertions:
+        - count:
+            type: CALLBACK_DELIVERY_SUCCEEDED
+            attributes:
+              eventId: evt-duplicate-20001
+          equals: 3

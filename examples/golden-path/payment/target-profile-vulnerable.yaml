@@ -1,0 +1,27 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: TargetProfile
+metadata:
+  name: vulnerable-consumer
+  displayName: Vulnerable Reference Consumer
+  version: 1.0.0
+spec:
+  baseUri: "http://rr-vulnerable:8091"
+  allowedPaths:
+    - /api/payments/**
+    - /test-support/reset
+    - /test-support/payments/**
+    - /webhooks/payments
+  allowedMethods:
+    - GET
+    - POST
+  allowedHosts:
+    - rr-vulnerable
+  allowedPorts:
+    - 8091
+  callbackPaths:
+    paymentSucceeded: /webhooks/payments
+  redaction:
+    headers:
+      - Authorization
+      - Cookie
+    jsonPaths: []

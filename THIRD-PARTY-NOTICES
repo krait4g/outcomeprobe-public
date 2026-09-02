@@ -1,0 +1,219 @@
+OutcomeProbe strict core-only distribution
+Third-party notices and release license decision index
+
+This file is distributed with the strict core-only source, server, CLI, and
+container release candidates. The machine-readable decisions, evidence URLs,
+usage contexts, and exception expiry fields are in THIRD-PARTY-LICENSES.json.
+Artifact-specific CycloneDX/SPDX files and normalized-license-inventory.json
+remain the authoritative inventory for the exact candidate bytes.
+
+SPDX expression validation is pinned to SPDX License List 3.28.0. The filtered
+source path is scripts/core-release-staging/spdx-license-registry-3.28.0.json;
+the standalone release asset basename is
+outcomeprobe-spdx-license-registry-3.28.0.json. Both bytes must have SHA-256
+f0c45148b93d643a34e09dc33ff55fed6c3b6205491b0b66c8cdb845fb19851c.
+The registry is reproducible from immutable SPDX commit
+c4a7237ec8f4654e867546f9f409749300f1bf4c: json/licenses.json SHA-256
+f728c534d8bd1044fc515a2ddb2292be99559021d830bfa3281be0bcd36302ee and
+json/exceptions.json SHA-256
+bd145bb558f44432fcd6f0d7e956ed0124dff72af7641a7cfc3b1b557dc390a5b.
+
+SBOM-declared package licenses are accepted only when tied to an exact package
+URL and version. Duplicate catalog records may inherit that declaration only
+through the same normalized identity. Debian ELF source-package records may
+inherit declarations from an installed binary package that names the exact
+source package and version. Files and described FILE/CONTAINER/OS subjects are
+classified as non-package SBOM records; they are not silently treated as
+licensed packages.
+
+The following components require committed identity-specific decisions because
+the release scanner did not provide a usable declaration for their exact
+package identity. License texts remain available from the evidence URLs in the
+machine-readable manifest and from the corresponding upstream distributions.
+
+- pkg:generic/oracle/openjdk@21.0.11+10-LTS — GPL-2.0-only WITH Classpath-exception-2.0
+- pkg:golang/github.com/canonical/go-flags@v0.0.0-20230403090104-105d09a091b8 — BSD-3-Clause
+- pkg:golang/github.com/canonical/pebble@v1.32.2-0.20260721212935-faa1696b477d — GPL-3.0-only
+- pkg:golang/github.com/canonical/pebble@v1.32.2-0.20260721212932-7becfc3a9fad — GPL-3.0-only
+- pkg:golang/github.com/canonical/x-go@v0.0.0-20230522092633-7947a7587f5b — GPL-3.0-only
+- pkg:golang/github.com/GehirnInc/crypt@v0.0.0-20230320061759-8cc1b52080c5 — BSD-2-Clause
+- pkg:golang/github.com/gorilla/mux@v1.8.1 — BSD-3-Clause
+- pkg:golang/github.com/gorilla/websocket@v1.5.3 — BSD-2-Clause
+- pkg:golang/github.com/pkg/term@v1.1.0 — BSD-2-Clause
+- pkg:golang/golang.org/x/sys@v0.46.0 — BSD-3-Clause
+- pkg:golang/golang.org/x/term@v0.44.0 — BSD-3-Clause
+- pkg:golang/gopkg.in/tomb.v2@v2.0.0-20161208151619-d5d1b5820637 — BSD-3-Clause
+- pkg:golang/gopkg.in/yaml.v2@v2.4.0 — Apache-2.0
+- pkg:golang/gopkg.in/yaml.v3@v3.0.1 — Apache-2.0 AND MIT
+- pkg:maven/com.tngtech.archunit/archunit@1.4.2 — Apache-2.0
+- pkg:maven/io.toolisticon.aptk/aptk-api@0.30.5 — MIT
+- pkg:maven/io.toolisticon.aptk/aptk-common@0.30.5 — MIT
+- pkg:maven/io.toolisticon.aptk/aptk-templating@0.30.5 — MIT
+- pkg:maven/io.toolisticon.aptk/aptk-tools@0.30.5 — MIT
+- pkg:maven/jrt-fs/jrt-fs@21.0.11 — GPL-2.0-only WITH Classpath-exception-2.0
+- pkg:maven/json-path/json-path@2.10.0 — Apache-2.0
+- pkg:maven/org.flywaydb/flyway-database-postgresql@12.4.0 — Apache-2.0
+- pkg:maven/org.springframework.boot.loader.launch.JarLauncher/outcomeprobe-server@0.1.0 — Apache-2.0
+- pkg:maven/org.springframework.boot.loader.launch.JarLauncher/outcomeprobe-server-core@0.1.0 — Apache-2.0
+
+No blanket, wildcard, or package-family exception is granted by this notice.
+The temporary entries below apply only to their exact versioned package
+identities and require an owner, substantive reason, approver, dated evidence,
+and non-expired date in THIRD-PARTY-LICENSES.json; otherwise staging fails.
+
+## Proposed SPDX mappings covered by temporary exact-identity exceptions (2026-08-11)
+
+- pkg:maven/ch.qos.logback/logback-classic@1.5.34 — proposed SPDX mapping=EPL-2.0 OR LGPL-2.1-only; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/ch.qos.logback/logback-classic/1.5.34
+- pkg:maven/ch.qos.logback/logback-core@1.5.34 — proposed SPDX mapping=EPL-2.0 OR LGPL-2.1-only; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/ch.qos.logback/logback-core/1.5.34
+- pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/com.fasterxml.jackson.core/jackson-annotations/2.21
+- pkg:maven/jakarta.annotation/jakarta.annotation-api@3.0.0 — proposed SPDX mapping=EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/jakarta.annotation/jakarta.annotation-api/3.0.0
+- pkg:maven/org.apache.logging.log4j/log4j-api@2.25.4 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-api/2.25.4
+- pkg:maven/org.apache.logging.log4j/log4j-to-slf4j@2.25.4 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-to-slf4j/2.25.4
+- pkg:maven/org.hdrhistogram/HdrHistogram@2.2.2 — proposed SPDX mapping=CC0-1.0 OR BSD-2-Clause; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.hdrhistogram/HdrHistogram/2.2.2
+- pkg:maven/org.jmolecules/jmolecules-events@2.0.1 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.jmolecules/jmolecules-events/2.0.1
+- pkg:maven/org.jmolecules/jstereotype@2.0.1 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.jmolecules/jstereotype/2.0.1
+- pkg:maven/org.objectweb.asm/asm@9.7.1 — proposed SPDX mapping=BSD-3-Clause; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.ow2.asm/asm/9.7.1
+- pkg:maven/org.slf4j/jul-to-slf4j@2.0.18 — proposed SPDX mapping=MIT; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.slf4j/jul-to-slf4j/2.0.18
+- pkg:maven/org.slf4j/slf4j-api@2.0.18 — proposed SPDX mapping=MIT; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.slf4j/slf4j-api/2.0.18
+- pkg:maven/org.snakeyaml/snakeyaml-engine@3.0.1 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/org.snakeyaml/snakeyaml-engine/3.0.1
+- pkg:maven/tools.jackson.core/jackson-core@3.1.4 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/tools.jackson.core/jackson-core/3.1.4
+- pkg:maven/tools.jackson.core/jackson-databind@3.1.4 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/tools.jackson.core/jackson-databind/3.1.4
+- pkg:maven/tools.jackson.dataformat/jackson-dataformat-yaml@3.1.4 — proposed SPDX mapping=Apache-2.0; temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://central.sonatype.com/artifact/tools.jackson.dataformat/jackson-dataformat-yaml/3.1.4
+
+## Temporary exact-identity SPDX normalization exceptions (2026-08-11)
+
+These entries apply only to the exact versioned purl shown. They are not wildcard or package-family ignores.
+
+- pkg:deb/ubuntu/apt@3.2.0 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/apt/3.2.0
+- pkg:deb/ubuntu/base-files@14ubuntu6.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/base-files/14ubuntu6.1
+- pkg:deb/ubuntu/base-passwd@3.6.8 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/base-passwd/3.6.8
+- pkg:deb/ubuntu/bash@5.3-2ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/bash/5.3-2ubuntu1
+- pkg:deb/ubuntu/bsdutils@1:2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/1%3A2.41.3-3ubuntu2
+- pkg:deb/ubuntu/bzip2@1.0.8-6build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/bzip2/1.0.8-6build2
+- pkg:deb/ubuntu/coreutils@9.7-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/coreutils/9.7-3ubuntu2
+- pkg:deb/ubuntu/cyrus-sasl2@2.1.28+dfsg1-9ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/cyrus-sasl2/2.1.28%2Bdfsg1-9ubuntu3
+- pkg:deb/ubuntu/dash@0.5.12-12ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/dash/0.5.12-12ubuntu3
+- pkg:deb/ubuntu/db5.3@5.3.28+dfsg2-10ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/db5.3/5.3.28%2Bdfsg2-10ubuntu1
+- pkg:deb/ubuntu/debianutils@5.23.2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/debianutils/5.23.2build1
+- pkg:deb/ubuntu/diffutils@1:3.12-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/diffutils/1%3A3.12-1
+- pkg:deb/ubuntu/dirmngr@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/dpkg@1.23.7ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/dpkg/1.23.7ubuntu1
+- pkg:deb/ubuntu/e2fsprogs@1.47.2-3ubuntu4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/e2fsprogs/1.47.2-3ubuntu4
+- pkg:deb/ubuntu/findutils@4.10.0-3build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/findutils/4.10.0-3build2
+- pkg:deb/ubuntu/freetype@2.14.2+dfsg-1ubuntu0.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/freetype/2.14.2%2Bdfsg-1ubuntu0.1
+- pkg:deb/ubuntu/gcc-16-base@16-20260322-1ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gcc-16/16-20260322-1ubuntu1
+- pkg:deb/ubuntu/gcc-16@16-20260322-1ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gcc-16/16-20260322-1ubuntu1
+- pkg:deb/ubuntu/gnu-coreutils@9.7-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/coreutils/9.7-3ubuntu2
+- pkg:deb/ubuntu/gnupg2@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gnupg@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gnutls28@3.8.12-2ubuntu1.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnutls28/3.8.12-2ubuntu1.1
+- pkg:deb/ubuntu/gpg-agent@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gpg@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gpgconf@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gpgsm@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/gpgv@2.4.8-4ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnupg2/2.4.8-4ubuntu3
+- pkg:deb/ubuntu/grep@3.12-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/grep/3.12-1
+- pkg:deb/ubuntu/gzip@1.14-1~exp2ubuntu1.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gzip/1.14-1~exp2ubuntu1.1
+- pkg:deb/ubuntu/krb5@1.22.1-2ubuntu4.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/krb5/1.22.1-2ubuntu4.1
+- pkg:deb/ubuntu/libapt-pkg7.0@3.2.0 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/apt/3.2.0
+- pkg:deb/ubuntu/libassuan9@3.0.2-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libassuan/3.0.2-2build1
+- pkg:deb/ubuntu/libassuan@3.0.2-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libassuan/3.0.2-2build1
+- pkg:deb/ubuntu/libblkid1@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/libbsd0@0.12.2-2build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libbsd/0.12.2-2build2
+- pkg:deb/ubuntu/libbsd@0.12.2-2build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libbsd/0.12.2-2build2
+- pkg:deb/ubuntu/libbz2-1.0@1.0.8-6build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/bzip2/1.0.8-6build2
+- pkg:deb/ubuntu/libc-bin@2.43-2ubuntu2.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/glibc/2.43-2ubuntu2.3
+- pkg:deb/ubuntu/libc-gconv-modules-extra@2.43-2ubuntu2.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/glibc/2.43-2ubuntu2.3
+- pkg:deb/ubuntu/libc6@2.43-2ubuntu2.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/glibc/2.43-2ubuntu2.3
+- pkg:deb/ubuntu/libcom-err2@1.47.2-3ubuntu4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/e2fsprogs/1.47.2-3ubuntu4
+- pkg:deb/ubuntu/libcrypt1@1:4.5.1-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libxcrypt/1%3A4.5.1-1
+- pkg:deb/ubuntu/libdb5.3t64@5.3.28+dfsg2-10ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/db5.3/5.3.28%2Bdfsg2-10ubuntu1
+- pkg:deb/ubuntu/libext2fs2t64@1.47.2-3ubuntu4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/e2fsprogs/1.47.2-3ubuntu4
+- pkg:deb/ubuntu/libffi8@3.5.2-4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libffi/3.5.2-4
+- pkg:deb/ubuntu/libffi@3.5.2-4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libffi/3.5.2-4
+- pkg:deb/ubuntu/libfreetype6@2.14.2+dfsg-1ubuntu0.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/freetype/2.14.2%2Bdfsg-1ubuntu0.1
+- pkg:deb/ubuntu/libgcc-s1@16-20260322-1ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gcc-16/16-20260322-1ubuntu1
+- pkg:deb/ubuntu/libgcrypt20@1.12.0-2ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libgcrypt20/1.12.0-2ubuntu1
+- pkg:deb/ubuntu/libgnutls30t64@3.8.12-2ubuntu1.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gnutls28/3.8.12-2ubuntu1.1
+- pkg:deb/ubuntu/libgpg-error0@1.58-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libgpg-error/1.58-2
+- pkg:deb/ubuntu/libgpg-error@1.58-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libgpg-error/1.58-2
+- pkg:deb/ubuntu/libgssapi-krb5-2@1.22.1-2ubuntu4.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/krb5/1.22.1-2ubuntu4.1
+- pkg:deb/ubuntu/libhogweed6t64@3.10.2-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/nettle/3.10.2-1
+- pkg:deb/ubuntu/libidn2-0@2.3.8-4build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libidn2/2.3.8-4build1
+- pkg:deb/ubuntu/libidn2@2.3.8-4build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libidn2/2.3.8-4build1
+- pkg:deb/ubuntu/libk5crypto3@1.22.1-2ubuntu4.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/krb5/1.22.1-2ubuntu4.1
+- pkg:deb/ubuntu/libkrb5-3@1.22.1-2ubuntu4.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/krb5/1.22.1-2ubuntu4.1
+- pkg:deb/ubuntu/libkrb5support0@1.22.1-2ubuntu4.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/krb5/1.22.1-2ubuntu4.1
+- pkg:deb/ubuntu/libksba8@1.6.7-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libksba/1.6.7-2build1
+- pkg:deb/ubuntu/libksba@1.6.7-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libksba/1.6.7-2build1
+- pkg:deb/ubuntu/libldap-common@2.6.10+dfsg-1ubuntu5 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openldap/2.6.10%2Bdfsg-1ubuntu5
+- pkg:deb/ubuntu/libldap2@2.6.10+dfsg-1ubuntu5 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openldap/2.6.10%2Bdfsg-1ubuntu5
+- pkg:deb/ubuntu/liblzma5@5.8.3-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/xz-utils/5.8.3-1
+- pkg:deb/ubuntu/libmd0@1.1.0-2build4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libmd/1.1.0-2build4
+- pkg:deb/ubuntu/libmd@1.1.0-2build4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libmd/1.1.0-2build4
+- pkg:deb/ubuntu/libmount1@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/libncursesw6@6.6+20251231-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ncurses/6.6%2B20251231-1
+- pkg:deb/ubuntu/libnettle8t64@3.10.2-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/nettle/3.10.2-1
+- pkg:deb/ubuntu/libnghttp2-14@1.68.0-2ubuntu0.2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/nghttp2/1.68.0-2ubuntu0.2
+- pkg:deb/ubuntu/libp11-kit0@0.26.2-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/p11-kit/0.26.2-2
+- pkg:deb/ubuntu/libpam-modules-bin@1.7.0-5ubuntu3.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pam/1.7.0-5ubuntu3.1
+- pkg:deb/ubuntu/libpam-modules@1.7.0-5ubuntu3.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pam/1.7.0-5ubuntu3.1
+- pkg:deb/ubuntu/libpam-runtime@1.7.0-5ubuntu3.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pam/1.7.0-5ubuntu3.1
+- pkg:deb/ubuntu/libpam0g@1.7.0-5ubuntu3.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pam/1.7.0-5ubuntu3.1
+- pkg:deb/ubuntu/libpcre2-8-0@10.46-1build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pcre2/10.46-1build1
+- pkg:deb/ubuntu/libpng1.6@1.6.57-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libpng1.6/1.6.57-1
+- pkg:deb/ubuntu/libpng16-16t64@1.6.57-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libpng1.6/1.6.57-1
+- pkg:deb/ubuntu/libpsl5t64@0.21.2-1.1build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libpsl/0.21.2-1.1build2
+- pkg:deb/ubuntu/libpsl@0.21.2-1.1build2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libpsl/0.21.2-1.1build2
+- pkg:deb/ubuntu/libreadline8t64@8.3-4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/readline/8.3-4
+- pkg:deb/ubuntu/libsasl2-2@2.1.28+dfsg1-9ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/cyrus-sasl2/2.1.28%2Bdfsg1-9ubuntu3
+- pkg:deb/ubuntu/libsasl2-modules-db@2.1.28+dfsg1-9ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/cyrus-sasl2/2.1.28%2Bdfsg1-9ubuntu3
+- pkg:deb/ubuntu/libselinux1@3.9-4build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libselinux/3.9-4build1
+- pkg:deb/ubuntu/libselinux@3.9-4build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libselinux/3.9-4build1
+- pkg:deb/ubuntu/libsmartcols1@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/libsqlite3-0@3.46.1-9ubuntu0.2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/sqlite3/3.46.1-9ubuntu0.2
+- pkg:deb/ubuntu/libss2@1.47.2-3ubuntu4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/e2fsprogs/1.47.2-3ubuntu4
+- pkg:deb/ubuntu/libssh2-1t64@1.11.1-1ubuntu0.26.04.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libssh2/1.11.1-1ubuntu0.26.04.3
+- pkg:deb/ubuntu/libssh2@1.11.1-1ubuntu0.26.04.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libssh2/1.11.1-1ubuntu0.26.04.3
+- pkg:deb/ubuntu/libssl3t64@3.5.5-1ubuntu3.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openssl/3.5.5-1ubuntu3.3
+- pkg:deb/ubuntu/libstdc++6@16-20260322-1ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/gcc-16/16-20260322-1ubuntu1
+- pkg:deb/ubuntu/libsystemd0@259.5-0ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/systemd/259.5-0ubuntu3
+- pkg:deb/ubuntu/libtasn1-6@4.21.0-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libtasn1-6/4.21.0-2
+- pkg:deb/ubuntu/libtinfo6@6.6+20251231-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ncurses/6.6%2B20251231-1
+- pkg:deb/ubuntu/libudev1@259.5-0ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/systemd/259.5-0ubuntu3
+- pkg:deb/ubuntu/libunistring5@1.3-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libunistring/1.3-2build1
+- pkg:deb/ubuntu/libunistring@1.3-2build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libunistring/1.3-2build1
+- pkg:deb/ubuntu/libuuid1@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/libxcrypt@1:4.5.1-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libxcrypt/1%3A4.5.1-1
+- pkg:deb/ubuntu/libzstd1@1.5.7+dfsg-3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libzstd/1.5.7%2Bdfsg-3
+- pkg:deb/ubuntu/libzstd@1.5.7+dfsg-3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/libzstd/1.5.7%2Bdfsg-3
+- pkg:deb/ubuntu/locales@2.43-2ubuntu2.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/glibc/2.43-2ubuntu2.3
+- pkg:deb/ubuntu/login@1:4.16.0-2+really2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/1%3A4.16.0-2%2Breally2.41.3-3ubuntu2
+- pkg:deb/ubuntu/logsave@1.47.2-3ubuntu4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/e2fsprogs/1.47.2-3ubuntu4
+- pkg:deb/ubuntu/mount@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/ncurses-base@6.6+20251231-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ncurses/6.6%2B20251231-1
+- pkg:deb/ubuntu/ncurses-bin@6.6+20251231-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ncurses/6.6%2B20251231-1
+- pkg:deb/ubuntu/ncurses@6.6+20251231-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ncurses/6.6%2B20251231-1
+- pkg:deb/ubuntu/nettle@3.10.2-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/nettle/3.10.2-1
+- pkg:deb/ubuntu/nghttp2@1.68.0-2ubuntu0.2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/nghttp2/1.68.0-2ubuntu0.2
+- pkg:deb/ubuntu/openldap@2.6.10+dfsg-1ubuntu5 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openldap/2.6.10%2Bdfsg-1ubuntu5
+- pkg:deb/ubuntu/openssl-provider-legacy@3.5.5-1ubuntu3.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openssl/3.5.5-1ubuntu3.3
+- pkg:deb/ubuntu/openssl@3.5.5-1ubuntu3.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/openssl/3.5.5-1ubuntu3.3
+- pkg:deb/ubuntu/p11-kit-modules@0.26.2-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/p11-kit/0.26.2-2
+- pkg:deb/ubuntu/p11-kit@0.26.2-2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/p11-kit/0.26.2-2
+- pkg:deb/ubuntu/pam@1.7.0-5ubuntu3.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pam/1.7.0-5ubuntu3.1
+- pkg:deb/ubuntu/pcre2@10.46-1build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/pcre2/10.46-1build1
+- pkg:deb/ubuntu/perl-base@5.40.1-7ubuntu0.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/perl/5.40.1-7ubuntu0.1
+- pkg:deb/ubuntu/perl@5.40.1-7ubuntu0.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/perl/5.40.1-7ubuntu0.1
+- pkg:deb/ubuntu/readline-common@8.3-4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/readline/8.3-4
+- pkg:deb/ubuntu/readline@8.3-4 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/readline/8.3-4
+- pkg:deb/ubuntu/rust-coreutils@0.8.0-0ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/rust-coreutils/0.8.0-0ubuntu3
+- pkg:deb/ubuntu/sed@4.9-2ubuntu1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/sed/4.9-2ubuntu1
+- pkg:deb/ubuntu/sensible-utils@0.0.26build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/sensible-utils/0.0.26build1
+- pkg:deb/ubuntu/sqlite3@3.46.1-9ubuntu0.2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/sqlite3/3.46.1-9ubuntu0.2
+- pkg:deb/ubuntu/systemd@259.5-0ubuntu3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/systemd/259.5-0ubuntu3
+- pkg:deb/ubuntu/tzdata@2026c-0ubuntu0.26.04.1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/tzdata/2026c-0ubuntu0.26.04.1
+- pkg:deb/ubuntu/ubuntu-keyring@2023.11.28.1build1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/ubuntu-keyring/2023.11.28.1build1
+- pkg:deb/ubuntu/util-linux@2.41.3-3ubuntu2 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/util-linux/2.41.3-3ubuntu2
+- pkg:deb/ubuntu/wget@1.25.0-2ubuntu4.3 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/wget/1.25.0-2ubuntu4.3
+- pkg:deb/ubuntu/xz-utils@5.8.3-1 — temporary exact-identity exception; owner=release-engineering; approvedBy=release-maintainer; expires=2026-09-10; evidence: https://launchpad.net/ubuntu/+source/xz-utils/5.8.3-1

@@ -1,0 +1,160 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: Scenario
+metadata:
+  name: realtime-track-single-event
+  displayName: Target token과 Callback HMAC을 포함한 단일 Track 연결
+  version: 1.0.0
+  labels:
+    domain: realtime-track
+    boundary: external-target
+spec:
+  contractRef:
+    name: realtime-track
+    version: 1.0.0
+  targetProfileRef: realtime-track-compose
+  seed: 90001
+  timeout: 45s
+  variables:
+    directTrackKey: track-direct-10001
+    callbackTrackKey: track-callback-10001
+    latitude: 37.5
+    longitude: 127.0
+  steps:
+    - id: reset-target
+      type: target.http
+      request:
+        method: POST
+        path: /test-support/outcomeprobe/reset
+        body: {}
+      expect:
+        status: 204
+
+    - id: ingest-direct-event
+      type: target.http
+      request:
+        method: POST
+        path: /api/v1/events
+        body:
+          eventId: evt-direct-10001
+          trackKey: "${variables.directTrackKey}"
+          version: 1
+          latitude: "${variables.latitude}"
+          longitude: "${variables.longitude}"
+          eventTsEpochMs: 1785000000000
+      expect:
+        status: 200
+        assertions:
+          - jsonPath: $.res_code
+            equals: 200
+
+    - id: probe-direct-event
+      type: probe.eventually
+      within: 10s
+      interval: 300ms
+      request:
+        method: GET
+        path: /test-support/outcomeprobe/radar-state/${variables.directTrackKey}
+      assertions:
+        - jsonPath: $.localMappingCount
+          equals: 1
+        - jsonPath: $.members[0].latitude
+          equals: "${variables.latitude}"
+        - jsonPath: $.members[0].longitude
+          equals: "${variables.longitude}"
+
+    - id: deliver-forged-callback
+      type: callback.schedule
+      callback: trackFused
+      resource:
+        type: track
+        id: "${variables.callbackTrackKey}"
+      events:
+        - eventId: evt-forged-10001
+          state: FUSED
+          version: 1
+          attributes:
+            latitude: "${variables.latitude}"
+            longitude: "${variables.longitude}"
+            eventTsEpochMs: 1785000001000
+          delivery:
+            delay: 200ms
+            signatureFault: INVALID_SIGNATURE
+            retry:
+              maxAttempts: 1
+
+    - id: wait-forged-rejection
+      type: evidence.await
+      within: 10s
+      match:
+        type: CALLBACK_DELIVERY_DEAD
+        attributes:
+          eventId: evt-forged-10001
+
+    - id: assert-forged-unchanged
+      type: probe.eventually
+      within: 5s
+      interval: 300ms
+      request:
+        method: GET
+        path: /test-support/outcomeprobe/radar-state/${variables.callbackTrackKey}
+      assertions:
+        - jsonPath: $.localMappingCount
+          equals: 0
+        - jsonPath: $.processedEventCount
+          equals: 0
+        - jsonPath: $.rejectedCallbackCount
+          equals: 1
+
+    - id: deliver-valid-callback
+      type: callback.schedule
+      callback: trackFused
+      resource:
+        type: track
+        id: "${variables.callbackTrackKey}"
+      events:
+        - eventId: evt-valid-10001
+          state: FUSED
+          version: 1
+          attributes:
+            latitude: "${variables.latitude}"
+            longitude: "${variables.longitude}"
+            eventTsEpochMs: 1785000002000
+          delivery:
+            delay: 200ms
+
+    - id: wait-valid-delivery
+      type: evidence.await
+      within: 10s
+      match:
+        type: CALLBACK_DELIVERY_SUCCEEDED
+        attributes:
+          eventId: evt-valid-10001
+
+    - id: assert-valid-callback-state
+      type: probe.eventually
+      within: 10s
+      interval: 300ms
+      request:
+        method: GET
+        path: /test-support/outcomeprobe/radar-state/${variables.callbackTrackKey}
+      assertions:
+        - jsonPath: $.localMappingCount
+          equals: 1
+        - jsonPath: $.processedEventCount
+          equals: 1
+        - jsonPath: $.members[0].version
+          equals: 1
+
+    - id: assert-hmac-evidence
+      type: evidence.assert
+      assertions:
+        - count:
+            type: CALLBACK_DELIVERY_DEAD
+            attributes:
+              eventId: evt-forged-10001
+          equals: 1
+        - count:
+            type: CALLBACK_DELIVERY_SUCCEEDED
+            attributes:
+              eventId: evt-valid-10001
+          equals: 1

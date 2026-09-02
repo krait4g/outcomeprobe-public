@@ -1,0 +1,32 @@
+[versions]
+springBoot = "4.1.0"
+springModulith = "2.1.0"
+picocli = "4.7.7"
+jsonPath = "2.9.0"
+jsonSchemaValidator = "1.5.6"
+archunit = "1.4.1"
+testcontainers = "1.21.3"
+wiremock = "3.13.1"
+shadow = "9.2.2"
+checkstyle = "10.26.1"
+zonkyEmbeddedPostgres = "2.1.0"
+postgresql = "42.7.12"
+
+[libraries]
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "springBoot" }
+spring-modulith-bom = { module = "org.springframework.modulith:spring-modulith-bom", version.ref = "springModulith" }
+spring-modulith-starter-core = { module = "org.springframework.modulith:spring-modulith-starter-core" }
+spring-modulith-test = { module = "org.springframework.modulith:spring-modulith-test" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+json-path = { module = "com.jayway.jsonpath:json-path", version.ref = "jsonPath" }
+json-schema-validator = { module = "com.networknt:json-schema-validator", version.ref = "jsonSchemaValidator" }
+archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
+zonky-embedded-postgres = { module = "io.zonky.test:embedded-postgres", version.ref = "zonkyEmbeddedPostgres" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

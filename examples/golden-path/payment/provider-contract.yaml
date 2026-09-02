@@ -1,0 +1,125 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: ProviderContract
+metadata:
+  name: generic-payment
+  displayName: Generic Payment Provider
+  version: 1.1.0
+spec:
+  emulatorAlias: mockpay
+  resourceTypes:
+    payment:
+      initialStates:
+        - READY
+      terminalStates:
+        - SUCCEEDED
+        - FAILED
+        - REFUNDED
+      allowedTransitions:
+        READY:
+          - PROCESSING
+        PROCESSING:
+          - SUCCEEDED
+          - FAILED
+        SUCCEEDED:
+          - REFUNDING
+        REFUNDING:
+          - REFUNDED
+  operations:
+    confirmPayment:
+      request:
+        method: POST
+        path: /v1/payments/{paymentId}/confirm
+        resourceType: payment
+        resourceId:
+          source: PATH
+          expression: paymentId
+        idempotencyKey:
+          source: HEADER
+          expression: Idempotency-Key
+          required: true
+        bodyAssertions:
+          - jsonPath: $.amount
+            required: true
+      transition:
+        from:
+          - READY
+          - PROCESSING
+        intermediate: PROCESSING
+        committed: SUCCEEDED
+      successResponse:
+        status: 200
+        body:
+          paymentId: "${resource.id}"
+          status: "${resource.state}"
+          transactionId: "${generated.transactionId}"
+    getPayment:
+      request:
+        method: GET
+        path: /v1/payments/{paymentId}
+        resourceType: payment
+        resourceId:
+          source: PATH
+          expression: paymentId
+      successResponse:
+        status: 200
+        body:
+          paymentId: "${resource.id}"
+          status: "${resource.visibleState}"
+    refundPayment:
+      request:
+        method: POST
+        path: /v1/payments/{paymentId}/refund
+        resourceType: payment
+        resourceId:
+          source: PATH
+          expression: paymentId
+        idempotencyKey:
+          source: HEADER
+          expression: Idempotency-Key
+          required: true
+      transition:
+        from:
+          - SUCCEEDED
+        intermediate: REFUNDING
+        committed: REFUNDED
+      successResponse:
+        status: 200
+        body:
+          paymentId: "${resource.id}"
+          status: "${resource.state}"
+  callbacks:
+    paymentSucceeded:
+      eventType: PAYMENT_SUCCEEDED
+      resourceType: payment
+      versionField: $.version
+      body:
+        eventId: "${generated.eventId}"
+        type: PAYMENT_SUCCEEDED
+        occurredAt: "${clock.isoInstant}"
+        data:
+          paymentId: "${resource.id}"
+          status: SUCCEEDED
+          transactionId: "${resource.attributes.transactionId}"
+      signature:
+        algorithm: HMAC_SHA256
+        header: X-OutcomeProbe-Signature
+        secretRef: callback-signing-key
+        encoding: HEX_LOWER
+        signedContent: RAW_BODY
+    paymentRefunded:
+      eventType: PAYMENT_REFUNDED
+      resourceType: payment
+      versionField: $.version
+      body:
+        eventId: "${generated.eventId}"
+        type: PAYMENT_REFUNDED
+        occurredAt: "${clock.isoInstant}"
+        data:
+          paymentId: "${resource.id}"
+          status: REFUNDED
+      signature:
+        algorithm: HMAC_SHA256
+        header: X-OutcomeProbe-Signature
+        secretRef: callback-signing-key
+        encoding: HEX_LOWER
+        signedContent: RAW_BODY

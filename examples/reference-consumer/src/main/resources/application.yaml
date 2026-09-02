@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: reference-consumer
+  profiles:
+    default: vulnerable
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8091
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+reference-consumer:
+  provider:
+    base-url: ${OUTCOMEPROBE_EMULATOR_BASE_URL:http://localhost:8080/emulator/mockpay}
+  booking-provider:
+    base-url: ${OUTCOMEPROBE_BOOKING_EMULATOR_BASE_URL:http://localhost:8080/emulator/mockbooking}
+  emulator-token: ${OUTCOMEPROBE_EMULATOR_TOKEN:}
+  webhook:
+    signing-secret: ${OUTCOMEPROBE_DEMO_CALLBACK_SECRET}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: vulnerable
+
+server:
+  port: 8091
+
+---
+spring:
+  config:
+    activate:
+      on-profile: resilient
+
+server:
+  port: 8092

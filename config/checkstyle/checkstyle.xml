@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="^\s*/\*(?!\*)"/>
+        <property name="message" value="일반 블록 주석(/*)은 금지됩니다. /** 또는 // 형식만 사용하세요."/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="TODO(?!\(OP-\d+\))"/>
+        <property name="message" value="TODO는 TODO(OP-번호) 형식만 허용됩니다."/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="MissingJavadocType">
+            <property name="scope" value="private"/>
+            <property name="tokens" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, RECORD_DEF"/>
+        </module>
+        <!-- 명세 22.7 자동 Gate 범위: public·protected 메소드와 생성자만 필수다.
+             private 메소드는 한국어 주석 검증기가 경고로 점검한다. -->
+        <module name="MissingJavadocMethod">
+            <property name="scope" value="protected"/>
+            <property name="allowMissingPropertyJavadoc" value="true"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
+        </module>
+        <module name="JavadocType">
+            <property name="scope" value="private"/>
+        </module>
+    </module>
+</module>

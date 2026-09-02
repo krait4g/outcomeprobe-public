@@ -1,0 +1,53 @@
+apiVersion: outcomeprobe.io/v1alpha1
+kind: ProviderContract
+metadata:
+  name: realtime-track
+  displayName: Self-contained Realtime Track Target
+  version: 1.0.0
+spec:
+  emulatorAlias: realtime-track-provider
+  resourceTypes:
+    track:
+      initialStates:
+        - READY
+      terminalStates:
+        - FUSED
+      allowedTransitions:
+        READY:
+          - FUSED
+  operations:
+    getTrack:
+      request:
+        method: GET
+        path: /v1/tracks/{trackKey}
+        resourceType: track
+        resourceId:
+          source: PATH
+          expression: trackKey
+      successResponse:
+        status: 200
+        body:
+          trackKey: "${resource.id}"
+          state: "${resource.visibleState}"
+  callbacks:
+    trackFused:
+      eventType: TRACK_FUSED
+      resourceType: track
+      versionField: $.data.version
+      body:
+        eventId: "${generated.eventId}"
+        type: TRACK_FUSED
+        occurredAt: "${clock.isoInstant}"
+        data:
+          trackKey: "${resource.id}"
+          state: "${resource.state}"
+          version: "${resource.version}"
+          latitude: "${resource.attributes.latitude}"
+          longitude: "${resource.attributes.longitude}"
+          eventTsEpochMs: "${resource.attributes.eventTsEpochMs}"
+      signature:
+        algorithm: HMAC_SHA256
+        header: X-OutcomeProbe-Signature
+        secretRef: realtime-callback-signing-key
+        encoding: HEX_LOWER
+        signedContent: RAW_BODY
